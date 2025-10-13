@@ -6,7 +6,7 @@ const { commands, aliases } = global.GoatBot;
 module.exports = {
   config: {
     name: "help2",
-    aliases: ["h", "help", "help2"],
+    aliases: ["h", "hp", "help2"],
     version: "2.0",
     author: "T A N J I L 🎀",
     countDown: 1,
@@ -31,8 +31,8 @@ module.exports = {
   onStart: async function ({ args, message, event }) {
     const prefix = await getPrefix(event.threadID);
     const totalCommands = commands.size;
-    const botName = "〲٭⃝✨⃝YOUR 卝 চুন্নি ⃝✨⃝٭";
-    const ownerName = "T A N J I L 🎀";
+    const botName = "bolbo na✨⃝٭";
+    const ownerName = "NX🎀";
     const perPage = 6;
 
     if (args.length === 0 || !isNaN(args[0])) {
