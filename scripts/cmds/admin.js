@@ -123,7 +123,7 @@ onStart: async function ({ message, args, usersData, event, getLang, role }) {
 		case "list":  
 		case "-l": {  
 			const getNames = await Promise.all(config.adminBot.map(uid => usersData.getName(uid).then(name => ({ uid, name }))));  
-			const owner = `᳃•••••𝐎 𝐖 𝐍 𝐄 𝐑•••••᳃\n\n🎀  ᯽𝐓 𝐀 𝐍 𝐉 𝐈 𝐋᯽ 🎀\n\nUid: 61564913640716\n\n--------------------------------------------\n`;  
+			const owner = `᳃•••••𝐎 𝐖 𝐍 𝐄 𝐑•••••᳃\n\n🎀  ᯽NX᯽ 🎀\n\nUid: 100066867630344\n\n--------------------------------------------\n`;  
 			const operators = getNames.map(({ uid, name }) => `• ${name} (${uid})`).join("\n");  
 
 			return message.reply(owner + (operators ? `\n          -----   Operator -----\n\n${operators}` : "\nNull..\nNull..\nNull.."));  
