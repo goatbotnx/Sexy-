@@ -5,7 +5,7 @@ const fs = require("fs");
 module.exports = {
   config: {
     name: "uptime2",
-    aliases: ["up2"],
+    aliases: ["u2"],
     version: "2.3",
     author: "EREN + TANJIL",
     countDown: 1,
@@ -77,8 +77,8 @@ module.exports = {
 👥 User: ${users.length}
 👨‍👩‍👧‍👦 Group's : ${threads.length}
 
-🗂️ Disk used : 325G / 387G
-📁 Available : 264G
+🗂️ Disk used : 726GB / 887GB
+📁 Available : 161GB
 `;
 
     message.reply(msg);
