@@ -18,10 +18,10 @@ module.exports = {
   onStart: async function ({ api, event, args }) {
     // Replace with your info
     const userInfo = {
-      name: " 𝐓 𝐀 𝐍 𝐉 𝐈 𝐋 ᯽",  // Replace with your name
-      age: "𝟏𝟖±",           // Replace with your age
-      location: "𝐃𝐡𝐚𝐤𝐚",    // Replace with your location
-      bio: "Bot & JavaScript Lover | Always Learning!", // Replace with your bio
+      name: " TBT NX210᯽",  // Replace with your name
+      age: "18±",           // Replace with your age
+      location: "Narsingdi",    // Replace with your location
+      bio: "THE BAD TRADER NEGATIVE XALMAN ", // Replace with your bio
       botName: "𝐁𝐨𝐥𝐛𝐨 𝐧𝐚", // Replace with bot's name
       botVersion: "1.0",    // Replace with bot's version
     };
@@ -43,8 +43,8 @@ module.exports = {
 
     // Example Imgur video links
     const imgurLinks = [
-      "https://i.imgur.com/lzLYl1w.mp4",  // Replace with actual Imgur video links
-      "https://i.imgur.com/lzLYl1w.mp4",
+      "",  // Replace with actual Imgur video links
+      "",
     ];
 
     // Download videos and send them as attachments
