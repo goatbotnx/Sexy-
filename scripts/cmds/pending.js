@@ -52,7 +52,7 @@ onReply: async function({ api, event, Reply, getLang, commandName, prefix }) {
 │PREFIX : /
 ╰──────────────֍
 ╭────֍
-│Successful Connected ✅
+│Successful Connected by nx ✅
 ╰─────────────֍`, Reply.pending[ArYanIndex - 1].threadID);
             count+=1;
         }
