@@ -1,6 +1,6 @@
 {
   "facebookAccount": {
-    "email": "",
+    "email": "x",
     "password": "",
     "2FASecret": "",
     "i_user": "",
@@ -12,7 +12,7 @@
   "antiInbox": false,
   "language": "en",
   "notesLanguage": "change to your language with ISO 639-1 code, available languages: vi (Vietnamese), en (English)",
-  "nickNameBot": "‌♡your baby💋",
+  "nickNameBot": "‌♡your baby♡",
   "prefix": "/",
   "adminOnly": {
     "enable": false,
@@ -156,4 +156,4 @@
     "online": false,
     "notes": "Document here: https://github.com/ntkhang03/fb-chat-api/blob/master/DOCS.md#apisetoptionsoptions "
   }
-    }
+}
