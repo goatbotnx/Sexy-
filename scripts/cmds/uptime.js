@@ -1,45 +1,58 @@
+const os = require("os");
+
 module.exports = {
   config: {
     name: "uptime",
-    aliases: ["up", "upt"],
-    version: "1.0",
-    author: "〲T A N J I L ツ",
+    version: "2.2",
+    author: "xnil6x",
     role: 0,
-    shortDescription: {
-      en: "Displays the uptime of the bot."
-    },
-    longDescription: {
-      en: "Displays the amount of time that the bot has been running for."
-    },
-    category: "System",
-    guide: {
-      en: "Use {p}uptime to display the uptime of the bot."
-    }
+    shortDescription: "Show bot uptime info",
+    longDescription: "Display stylish uptime, system stats, RAM, prefix, threads, etc.",
+    category: "system",
+    guide: "{pn}"
   },
-  onStart: async function ({ api, event, args }) {
+
+  onStart: async function ({ message, threadsData }) {
     const uptime = process.uptime();
-    const seconds = Math.floor(uptime % 60);
-    const minutes = Math.floor((uptime / 60) % 60);
-    const hours = Math.floor((uptime / (60 * 60)) % 24);
     const days = Math.floor(uptime / (60 * 60 * 24));
+    const hours = Math.floor((uptime % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((uptime % (60 * 60)) / 60);
+    const seconds = Math.floor(uptime % 60);
 
-    const uptimeString = `
-╭──• ᴛɪᴍᴇʀ ꜱᴛᴀʀᴛᴇᴅ •──╮
-│
-│   😴 ᴀᴍᴀʀ ᴛɪᴍᴇ ᴅᴇᴋʜᴇ ᴋɪ ᴋᴏʀʙɪ?
-│
-├─────────────
-│ ⏳ ᴛɪᴍᴇ ʟᴇꜰᴛ:
-│
-│   • ${days} ᴅᴀʏꜱ
-│   • ${hours} ʜᴏᴜʀꜱ
-│   • ${minutes} ᴍɪɴᴜᴛᴇꜱ
-│   • ${seconds} ꜱᴇᴄᴏɴᴅꜱ
-│
-╰─────────────╯
-          ꜱᴛᴀʏ ꜰᴏᴄᴜꜱᴇᴅ, ᴅᴏɴ'ᴛ ᴡᴀꜱᴛᴇ ɪᴛ...
-`;
+    const uptimeString = `${days}d ${hours}h ${minutes}m ${seconds}s`;
 
-    api.sendMessage(uptimeString, event.threadID);
+    const cpu = os.cpus()[0].model;
+    const cores = os.cpus().length;
+    const platform = os.platform();
+    const arch = os.arch();
+    const nodeVersion = process.version;
+    const hostname = os.hostname();
+
+    const totalMem = os.totalmem() / 1024 / 1024;
+    const freeMem = os.freemem() / 1024 / 1024;
+    const usedMem = totalMem - freeMem;
+
+    const prefix = global.GoatBot.config.PREFIX || "/";
+    const totalThreads = await threadsData.getAll().then(t => t.length);
+    const totalCommands = global.GoatBot.commands.size;
+
+    const line = "═".repeat(40);
+    const box = `
+╔${line}╗
+║ 🛠️  𝗨𝗽𝘁𝗶𝗺𝗲 & 𝗦𝘆𝘀𝘁𝗲𝗺 𝗦𝘁𝗮𝘁𝘀
+╟${line}╢
+║ ⏳ 𝗨𝗽𝘁𝗶𝗺𝗲        : ${uptimeString}
+║ ⚙️ 𝗖𝗣𝗨           : ${cpu} (${cores} cores)
+║ 🧠 𝗥𝗔𝗠 𝗨𝘀𝗲𝗱     : ${usedMem.toFixed(2)} MB / ${totalMem.toFixed(2)} MB
+║ 💾 𝗣𝗹𝗮𝘁𝗳𝗼𝗿𝗺      : ${platform} (${arch})
+║ 🖥️ 𝗛𝗼𝘀𝘁𝗻𝗮𝗺𝗲      : tbt.nx
+║ 🔢 𝗧𝗵𝗿𝗲𝗮𝗱𝘀      :  573
+║ 🧩 𝗖𝗼𝗺𝗺𝗮𝗻𝗱𝘀     : ${totalCommands}
+║ 🧪 𝗡𝗼𝗱𝗲.𝗷𝘀       : ${nodeVersion}
+║ 🪄 𝗣𝗿𝗲𝗳𝗶𝘅        : ${prefix}
+║ 👑 𝗔𝗱𝗺𝗶𝗻    :  Mâybê Nx
+╚${line}╝`;
+
+    message.reply(box);
   }
 };
