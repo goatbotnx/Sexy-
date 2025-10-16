@@ -1,57 +1,50 @@
-const axios = require('axios');
-const UPoLPrefix = [
-  '-ai',
-  'ai',
-  '/ai',
-  '',
-  'ask'
-]; 
+const axios = require("axios");
 
-  module.exports = {
-  config: {
-    name: 'ai',
-    version: '1.2.1',
-    role: 0,
-    category: 'AI',
-    author: 'ncs pro',
-    shortDescription: '',
-    longDescription: '',
-  },
-  
-  onStart: async function () {},
-  onChat: async function ({ message, event, args, api, threadID, messageID }) {
-      
-      const ahprefix = UPoLPrefix.find((p) => event.body && event.body.toLowerCase().startsWith(p));
-      if (!ahprefix) {
-        return; 
-      } 
-      
-     const upol = event.body.substring(ahprefix.length).trim();
-   if (!upol) {
-        await message.reply('Enter a question.? 🥹');
-        return;
-      }
-      
-      const apply = ['Awww🥹, maybe you need my help', 'How can i help you?', 'How can i assist you today?', 'How can i help you?🙂'];
-      
-     const randomapply = apply[Math.floor(Math.random() * apply.length)];
+module.exports = {
+	config: {
+		name: "nxai",
+		aliases: ["ai"],
+		version: "1.0",
+		author: "nx_",
+		countDown: 5,
+		role: 0,
+		shortDescription: "Chat with You AI",
+		longDescription: "Send a message and get a friendly AI response with related questions",
+		category: "ai",
+		guide: {
+			en: "{pn} <your message>"
+		}
+	},
 
-     
-      if (args[0] === 'hi') {
-          message.reply(`${randomapply}`);
-          return;
-      }
-      
-    const encodedPrompt = encodeURIComponent(args.join(" "));
+	langs: {
+		en: {
+			noInput: "⚠️ Please type something to ask.",
+			loading: "🧠 Thinking...",
+			error: "❌ Failed to get response from You AI."
+		}
+	},
 
-   await message.reply('princes  thinking..');
-  
-    const response = await axios.get(`https://sandipbaruwal.onrender.com/gemini?prompt=${encodedPrompt}`);
- 
-     const UPoL = response.data.answer; 
+	onStart: async function ({ message, args, getLang }) {
+		const input = args.join(" ");
+		if (!input) return message.reply(getLang("noInput"));
 
-      const upolres = `${UPoL}`;
-      
-        message.reply(upolres);
-  }
+		message.reply(getLang("loading"));
+
+		try {
+			const apiUrl = `https://betadash-api-swordslush-production.up.railway.app/you?chat=${encodeURIComponent(input)}`;
+			const res = await axios.get(apiUrl);
+
+			const data = res.data;
+			if (!data || !data.response) return message.reply(getLang("error"));
+
+			const related = data.relatedSearch?.length
+				? "\n\n💡 Related:\n" + data.relatedSearch.map((r, i) => `• ${r}`).join("\n")
+				: "";
+
+			return message.reply(`🧠 ${data.response}${related}`);
+		} catch (err) {
+			console.error("YouAI Error:", err.message || err);
+			return message.reply(getLang("error"));
+		}
+	}
 };
