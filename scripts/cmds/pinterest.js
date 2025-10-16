@@ -1,84 +1,57 @@
 const axios = require("axios");
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
 
 module.exports = {
- config: {
- name: "pinterest",
- aliases: ["pin"],
- version: "0.0.1",
- author: "ArYAN",
- role: 0,
- countDown: 20,
- longDescription: {
- en: "This command allows you to search for images on Pinterest based on a given query and fetch a specified number of images (1-100)."
- },
- category: "media",
- guide: {
- en: "{pn} <search query> <number of images>\nExample: {pn} cat - 10"
- }
- },
+  config: {
+    name: "pinterest",
+    aliases: ["pin"],
+    version: "1.0",
+    author: "nexo_here",
+    countDown: 2,
+    role: 0,
+    description: "Search Pinterest and get image results",
+    category: "image",
+    guide: {
+      en: "{pn} [keyword] — Get Pinterest image results\nExample: {pn} Naruto"
+    }
+  },
 
- onStart: async function ({ api, event, args }) {
- try {
- const keySearch = args.join(" ");
- if (!keySearch.includes("-")) {
- return api.sendMessage(
- `Please enter the search query and number of images\n\nExample:\n{p}pin cat - 10.`,
- event.threadID,
- event.messageID
- );
- }
+  onStart: async function ({ api, event, args }) {
+    const query = args.join(" ");
+    if (!query) return api.sendMessage("❗ Please provide a search keyword.\nExample: pinterest Naruto", event.threadID, event.messageID);
 
- const keySearchs = keySearch.substr(0, keySearch.indexOf('-')).trim();
- let numberSearch = parseInt(keySearch.split("-").pop()) || 6;
- if (numberSearch > 20) {
- numberSearch = 20;
- }
+    try {
+      const count = 5;
+      const url = `https://betadash-api-swordslush-production.up.railway.app/pinterest?search=${encodeURIComponent(query)}&count=${count}`;
+      const res = await axios.get(url);
 
- const apiUrl = `https://aryan-noobs-apis.onrender.com/pinterest?search=${encodeURIComponent(keySearchs)}&count=${numberSearch}`;
+      const imageList = res.data?.data;
+      if (!Array.isArray(imageList) || imageList.length === 0) {
+        return api.sendMessage("❌ No results found!", event.threadID, event.messageID);
+      }
 
- const res = await axios.get(apiUrl);
- const data = res.data.data;
- const imgData = [];
+      const attachments = [];
 
- const cacheDir = path.join(__dirname, "cache");
- if (!fs.existsSync(cacheDir)) {
- fs.mkdirSync(cacheDir);
- }
+      for (let i = 0; i < imageList.length; i++) {
+        const imageRes = await axios.get(imageList[i], { responseType: "arraybuffer" });
+        const imagePath = path.join(__dirname, `pin_${i}.jpg`);
+        fs.writeFileSync(imagePath, imageRes.data);
+        attachments.push(fs.createReadStream(imagePath));
+      }
 
- for (let i = 0; i < Math.min(numberSearch, data.length); i++) {
- try {
- const imgResponse = await axios.get(data[i], {
- responseType: "arraybuffer",
- headers: {
- 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
- }
- });
- const imgPath = path.join(cacheDir, `${i + 1}.jpg`);
- await fs.promises.writeFile(imgPath, imgResponse.data, 'binary');
- imgData.push(fs.createReadStream(imgPath));
- } catch (error) {
- console.error(`Error downloading image ${data[i]}:`, error.message);
- }
- }
+      api.sendMessage({
+        body: `🔍 Pinterest results for: "${query}"`,
+        attachment: attachments
+      }, event.threadID, () => {
+        for (let i = 0; i < attachments.length; i++) {
+          fs.unlinkSync(path.join(__dirname, `pin_${i}.jpg`));
+        }
+      }, event.messageID);
 
- await api.sendMessage({
- body: ``,
- attachment: imgData,
- }, event.threadID, event.messageID);
-
- if (fs.existsSync(cacheDir)) {
- await fs.promises.rm(cacheDir, { recursive: true });
- }
-
- } catch (error) {
- console.error(error);
- return api.sendMessage(
- `An error occurred: ${error.message}`,
- event.threadID,
- event.messageID
- );
- }
- }
+    } catch (err) {
+      console.error(err);
+      api.sendMessage("🚫 Error fetching from Pinterest API.", event.threadID, event.messageID);
+    }
+  }
 };
